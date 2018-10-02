@@ -1,5 +1,16 @@
 import numpy as np
+import pandas as pd
+import pyqtgraph as pg
 
+readdata = pd.read_csv("/Users/karanmukhi/Desktop/MPhys/data/wineAllOriginal-Crystal.txt", sep="\t", header=None);
+data = np.array(readdata);
+data = np.delete(data, 0, 0)
+data = data.astype(float)
+data = np.swapaxes(data,0,1)
+
+#VARIABLES
+stepSize = 0.01
+nSteps = 100
 
 def getAlpha(d):
     """
@@ -7,14 +18,33 @@ def getAlpha(d):
     Should produce 1xd(d-1)/2 array of position in grand tour.
 
     """
-    p = d*(d-1)/2
+    p = d*(d-1)/2     
+    primeList = []
+    count = 1
+    while len(primeList) < p:
+        count += 1
+        primeBool = False
+        for i in range(2, count - 1):
+            if count % i == 0:
+                primeBool = True
+        if primeBool == False:
+            irrational = (np.sqrt(count)%1)
+            primeList.append(irrational)
+            
+    primeList = np.asarray(primeList)
+    primeList = primeList.dot(stepSize)
+    """
+    Irrational number generation using exponentials, not being used
+    p = int(d*(d-1)/2)
     alpha = np.zeros(p) #alpha(t) parameters defining grand tour in G2,d
 
     for i in range(0,p):
-        alpha[i] = np.exp(i) % 1
-
-    alpha = 0.0001**alpha
-    return alpha
+        alpha[i] = (np.exp(i) % 1) * 2 * np.pi
+        
+    alpha = alpha.dot(0.001)
+    """
+    
+    return primeList
 
 
 def getAngles(alpha,d):
@@ -67,7 +97,7 @@ def BetaFn(d, theta):
 
     Outputs the full matrix transformation for all rotations
     """
-    beta = RotationMatrix(1, 2, d, theta[1,2])
+    b = RotationMatrix(1, 2, d, theta[1,2])
     i = 1
     j = 2
     for i in range(d):
@@ -76,11 +106,12 @@ def BetaFn(d, theta):
                 continue
             if i==1 and j==2:
                 continue
-            beta = np.matmul(beta, RotationMatrix(i, j, d, theta[i,j]))
-    return beta
+            b = np.matmul(b, RotationMatrix(i, j, d, theta[i,j]))
+            
+    return b
 
 
-def GrandTour(data, nsteps):
+def GrandTour(data, nSteps):
     """
     Inputs:
     data = array of data points, dimensions x npoints
@@ -88,21 +119,22 @@ def GrandTour(data, nsteps):
     the time step at that point in the tour
     """
 
-    d = np.size(data)[0] #dimensions of data
-    nPoints = np.size(data)[1] #number of data points
-    tData = np.zeros((nsteps,d,nPoints)) #initialise 3d matrix to store stransforemd data at each timestep
-    
+    d = np.shape(data)[0] #dimensions of data
+    nPoints = np.shape(data)[1] #number of data points
+    tData = np.zeros((nSteps,d,nPoints)) #initialise 3d matrix to store stransforemd data at each timestep
+    tBeta = np.zeros((nSteps,d,d))
     alpha = getAlpha(d)
     
-    for t in range(0, nsteps):
+    for t in range(0, nSteps):
 
-        alpha = t**alpha
+        alpha = alpha.dot(t)     
         theta = getAngles(alpha, d)
-        B = BetaFn(d, theta)
-        a = np.matmul(B, data)
+        b = BetaFn(d, theta)
+        a = np.matmul(b, data)
         tData[t,:,:] = a
-
+        tBeta[t,:,:] = b
+        
     return tData
 
 
-
+tData = GrandTour(data,nSteps)

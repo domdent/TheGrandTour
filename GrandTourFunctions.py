@@ -1,8 +1,9 @@
 import numpy as np
 import pandas as pd
 import pyqtgraph as pg
+import time
 
-readdata = pd.read_csv("/Users/karanmukhi/Desktop/MPhys/data/wineAllOriginal-Crystal.txt", sep="\t", header=None);
+readdata = pd.read_csv("/Users/academic/Desktop/MPhys/data/test_data.txt", sep="\t", header=None);
 data = np.array(readdata);
 data = np.delete(data, 0, 0)
 data = data.astype(float)
@@ -10,7 +11,7 @@ data = np.swapaxes(data,0,1)
 
 #VARIABLES
 stepSize = 0.01
-nSteps = 100
+nSteps = 1000
 
 def getAlpha(d):
     """
@@ -123,11 +124,13 @@ def GrandTour(data, nSteps):
     nPoints = np.shape(data)[1] #number of data points
     tData = np.zeros((nSteps,d,nPoints)) #initialise 3d matrix to store stransforemd data at each timestep
     tBeta = np.zeros((nSteps,d,d))
-    alpha = getAlpha(d)
+    Alpha = getAlpha(d)
+
     
     for t in range(0, nSteps):
-
-        alpha = alpha.dot(t)     
+        
+        
+        alpha = Alpha.dot(t)
         theta = getAngles(alpha, d)
         b = BetaFn(d, theta)
         a = np.matmul(b, data)

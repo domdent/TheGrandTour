@@ -1,0 +1,240 @@
+\documentclass[a4paper,11pt,twoside]{article}
+\usepackage{titleps,kantlipsum}
+\newpagestyle{mypage}{%
+  \headrule
+  \sethead{\thesubsection\quad \subsectiontitle}
+  \setfoot{}{\usepage}{}
+}
+
+\newpagestyle{myStylePage}{%
+  \headrule
+  \sethead{\sectiontitle}{}{}
+  \setfoot{}{\usepage}{}%
+}
+
+
+
+% LaTeX can be enhanced by the use of packages. These packages can do many things, a few of the most common and useful are used here. They are declared before the document proper, in what is known as the 'preamble'. Packages need to be installed when a .tex file compiles into a .pdf, but should do so automatically.
+
+\usepackage[top=2.54cm, bottom=2.54cm, left=2.75cm, right=2.75cm]{geometry} %This sets the margins of the report.
+% \usepackage[linesnumbered,ruled,vlined]{algorithm2e}
+\usepackage{amsmath}
+\usepackage{amssymb}
+%\usepackage{physics}
+% \usepackage{multicol}
+% \usepackage{subcaption}
+% \usepackage{float}
+% \usepackage{textcomp}
+% \usepackage{isotope}
+% \usepackage{siunitx}
+% \usepackage{tikz}
+% \usepackage{tikz,amsmath}
+% \usepackage{tikz-3dplot}
+% \usetikzlibrary{shapes,calc,positioning}
+% \usetikzlibrary{calc,intersections}
+\usepackage{bm}
+
+% \usepackage{graphicx} % A package allowing insertion of images into the text.
+
+\def\doubleunderline#1{\underline{\underline{#1}}}
+
+% Choose your citations style by commenting out one of the following groups. If you decide to change style, you should also delete the .bbl file that you will find in the same folder as your .tex and .pdf files.
+
+% IEEE style citation:
+
+\usepackage{cite}         % A package that creates references in the IEEE style. 
+\newcommand{\citet}{\cite} % Use with cite only, so that it understands the natbib-specific \citet command
+\bibliographystyle{ieeetr} % IEEE referencing (use in conjunction with the cite package)
+
+%% Author-date style citation:
+%\usepackage[round]{natbib} % A package that creates references in the author-date style, with round brackets
+%\renewcommand{\cite}{\citep} % For use with natbib only: comment out for the cite package.
+%\bibliographystyle{plainnat} % Author-date referencing (use in conjunction with the natbib package)
+
+
+\usepackage{color} % Allows the colour of the font to be changed by using the '\color' command: This is just to support the blue comments in this template...use standard (black) text in your report.
+
+\linespread{1.2} % Sets the spacing between lines of text.
+\setlength{\parindent}{0cm}  % Suppresses indentation of text at the start of a paragraph
+
+\begin{document}
+
+ % This begins the document proper and ends the pre-amble
+\pagestyle{myStylePage}
+
+
+
+
+\begin{titlepage} % Begins the titlepage of the document
+\begin{center} % Starts the beginning of an environment where all text is centered.
+
+
+{\Huge Data Mining Using}\\[0.4cm]
+{\Huge the Grand Tour Algorithm}\\[0.8cm] % [0.5cm] sets the distance between this line and the next.
+\textit{Dominic Dent}~\\[0.3cm] % The '\\' starts a new paragraph, and will only work after a paragraph has started, unless we use '~'.
+\textit{9567718}~\\[0.3cm]
+School of Physics and Astronomy~\\[0.3cm]
+University of Manchester~\\[0.3cm]
+MPhys Project~\\[0.3cm]
+December 2018~\\[2cm]
+
+\vfill
+\end{center}
+
+{\Large \textbf{Abstract}}~\\[0.3cm]
+The Grand Tour algorithm produces a series of 2D projections of a high dimensional data-set. Machine learning algorithms were then applied to the 2D projections. A method that generates new projections to maximise a function is also presented.
+
+\end{titlepage}
+\pagenumbering{gobble} % This stops the title page being numbered
+\clearpage
+\pagenumbering{arabic} % sets the style of page numbering for the report
+\setcounter{page}{2} % Starts the numbering at page 2 as typically the first page is not numbered
+
+\newpage % Starts a new page to begin the report on.
+\tableofcontents
+
+\newpage
+
+\section{Introduction}
+
+From new ways of thinking about cancer prognosis to personalised political advertisements, data mining has a massive influence in today’s world. Due to the increase in computational power and amount of readily available data, machine learning techniques have seen a huge increase in use across academia and industry. 
+\newline
+
+The key aims of this project were to see if the grand tour could be used to gain an understanding to which machine learning algorithms may be best suited to a data set. After finding projections that the machine learning models had high accuracies, we decided to attempt to find new rotations that maximised the accuracy. A new technique to generate rotation matrices was constructed due to the aim of the Grand Tour algorithm isn’t to optimise but to visualise the data set through looking at many unique projections.
+\newline
+
+The vector space containing the full dimensionality of the data is known as the feature space.
+
+\newpage
+\section{The Grand Tour Algorithm}
+
+The grand tour is an algorithm that was developed as a tool to visualise high-dimensional data. Beyond 3 dimensions, visualising multi-dimensional spaces becomes problematic and unintuitive for most people. The grand tour proposes to get around this problem by producing a series of rotation matrices. The infinite set of these rotation matrices applied to the data points show the multidimensional space from every possible 2D projection. Due to the practical infeasibility of having an infinite number of rotation matrices, the grand tour algorithm attempts to explore unique 2D projections of the feature space within a finite number of time step iterations. 
+\newline
+
+A set of key features for the grand tour to have were proposed in the original paper. These include:
+\newline
+1) The sequence of planes should be dense in the space of all planes. This motivates the use of the Grassmannian manifold $G_{2,n}$. The Grassmannian $G_{k,n}$ is a compact smooth manifold that parameterises all $k$-dimensional linear subspaces of the $n$-dimensional real or complex vector space.
+\newline
+2) The sequence of planes should become dense in $G_{2,n}$ rapidly. For any practical use of the grand tour, the algorithm needs to be computationally efficient in satisfying some appromiately dense coverage of the space of all planes.
+\newline
+3) Ideally, the sequence of planes would be uniformly distibuted in $G_{2,n}$.
+\newline
+4)* For human visulaisation reasons, the grand tour should be continuous in the limit of infinitessimal step-size.
+\newline
+5)* Again, for human visualisation purposes, the sequence of planes should be approximately straight. In other words, the curve in $G_{2,n}$ should approximately follow a geodesic.
+\newline
+6) There should be some degree of flexibility in customising the grand tour's parameters.
+\newline
+7) The sequence of planes should be deterministic, that is to say, any grand tour should be able to be repeated.
+\newline
+
+* For the aim of this project, these features are less important due to the fact it is less important for human visualisation when data mining.
+\newline
+
+The grand tour also has the flexibility that the data can be projected into any number of dimensions less than $n$.
+\newline
+
+There are various methods to implement the grand tour algorithm, in this project the Asimov-Buja Winding Algorithm in $d$-space was used [1985 - Asi, 1985 - Buja and Asi, On some math…]. 
+
+\subsection{The Asimov-Buja Winding Algorithm or Torus Method}
+
+Each data point is represented as an $n$-dimensional vector in the feature space
+\begin{equation}
+\bm{\underline{x}}=\sum_{i=1}^n x_i\cdot\bm{\underline{e}}_i 
+\end{equation}
+where $x_i$ is the value of the data for the $i^{th}$ dimension and $\bm{\underline{e}}_i$ is the $i^{th}$ unit basis vector. The data is transformed by multiplying the rotation matrix by the data
+\begin{equation}
+\bm{\underline{x}}^\prime = \bm{\doubleunderline{Q}}(t)\cdot\bm{\underline{x}}
+\end{equation}
+where $\bm{\doubleunderline{Q}}(t)$ is the rotation matrix given by the grand tour at timestep $t$, the details of which will be described below. After the transformation has been made, $\bm{\underline{x}}^\prime$ is still a $n$-dimensional vector. To make the projection into 2D, two of the orginal $\bm{\underline{e}}_i$ basis vectors need to be chosen. If $j$ and $k$ are the chosen basis directions, the 2D space can now be represented by the respective $x$ and $y$ values
+\begin{equation}
+\begin{split}
+x=\bm{\underline{x}}^\prime\cdot\bm{\underline{e}}_j, 
+\\
+y=\bm{\underline{x}}^\prime\cdot\bm{\underline{e}}_k.
+\end{split}
+\end{equation}
+
+When constructing the generalised rotation matrix in the grand tour, we need to choose $\bm{\doubleunderline{Q}}(t)$ to be an element of the special orthogonal group $SO(n)$ which has the properties of being a square $n\times n$ matrix with a determinant of +1. $SO(n)$ is also equivalent to the space of all rotations of the unit sphere in $\mathbb{R}^n$, therefore it is a Lie group.
+\newline
+
+We require the sequence of planes in the grand tour to be dense in the space of all planes. To satisfy this, consider a curve in a $n$-torus, $\bf{T}^n$. The curve $\alpha$ will be dense if the components of $\alpha$ are all linear independent real numbers. In this context, real numbers $\lambda_i$ with  $i=1,...,N$ are said to satisfy the condition of linear independence if $\sum_{i=1}^N \lambda_i n_i=0$, where $n_i$ can be any set of integers, is only satisfied by the set containing $n_i=0, \forall i$. This gives the 
+\begin{equation}
+\alpha: \Bbb R \rightarrow \bf{T}
+
+\end{equation}
+
+\subsection{Implementation}
+
+\newpage
+\section{Machine Learning}
+
+Machine learning is an area of study involving making predictive computational models using statistics. There are two key types of machine learning algorithms – supervised and unsupervised. This project concerns the supervised type where there is access to a set of training data. Training datasets contain both input and output data, and by applying machine learning algorithms a model is trained to predict the output of new input data. Unsupervised learning consists of using input data to find structure in the given dataset.
+\newline
+\newline
+It is hypothesised under the “no free lunch theorem” that any two optimization algorithms are equivalent when their performance is averaged across all possible problems. By looking at the set of 2D plots over all calculated time steps, the 2 dimensions were used as inputs in three different machine learning algorithms. Each point on the 2D plot had a corresponding label or class. By using the 2 dimensions produced by the grand tour, and the corresponding class label, machine learning models were trained to predict the class. An accuracy measurement was taken to quantify how well the different models performed. A randomised split of training data and test data can be made to get a good indication of how well a model will perform at predicting new samples. However, due to the limited number of training samples in some of the data sets, this was not feasible. To further check for overfitting, the decision boundaries were also plotted.
+\newline
+\newline
+Overfitting is a problem in machine learning where the model has a complicated decision boundary that has a heavy bias towards the training data set. This has the effect of causing the models to not “generalize” well to new data samples.
+\newline
+\newline
+To implement the machine learning algorithms, various python libraries were used. Scikit-learn was primarily used for the SVM and decision tree and tensorflow/keras was used for the neural network.
+
+\subsection{Support Vector Machine (SVM)}
+
+Support vector machine, or SVM, is a supervised learning model finds a decision boundary that maximises the margin between two classes. The margin for a single point is the distance between the decision boundary and that point, the SVM algorithm finds the hyperplane that gives the maximal margin.
+\newline
+In the case where the data is not linearly separable, some points are allowed to be on the wrong side of the margin. These points are then given a slack variable and a new constraint is formulated:
+\newline
+Depending on the dimensionality of the vector space of the data, and the type of “kernel” used, the geometry of the decision boundary varies. For a linear kernel the decision boundary will be a hyperplane, in 2D this is a straight line. The kernel in the context used here describes the type of function used to create a transformation to form another dimension. The kernel trick helps find non-linear boundaries by using a transformation to find a hyperplane in the new feature space. 
+
+\subsection{Neural Network}
+
+A neural network is a machine learning technique that can be used for classifying data. The theory of computational neural networks was originally formulated in 1943 [McCulloch, Warren; Walter Pitts (1943). "A Logical Calculus of Ideas Immanent in Nervous Activity], however, due to the computational power needed, models were not commonly used until later on in the 20th century.  
+\newline
+\newline
+Neural networks are constructed with layers of nodes with directed links between nodes in subsequent layers. the first layer has a node for each input dimension or feature, whereas the last layer has a node for each possible output class or label. Between the first and last layers you can have hidden layers, with the number of layers and nodes in each layer being varied depending on the complexity of the model. Every layer excluding the output layer will have a bias node that will always be active (i.e. have a value of 1). Each node from the input layer is connect to all the nodes in the subsequent layer with a forward directed and weighted link. This repeats in the same manner to the final output layer. The activation of each node is computed by summing all the input nodes multiplied by their relative weights. The value of this sum is then applied to an “activation function” that will return a value between 0 and 1.
+\newline
+\newline
+To train a neural network, the weights are randomly initialised and a training sample is inputted at the first layer of nodes. The values are then fed-forward through the network to give a reading at each output node between 0 and 1, which can be heuristically interpreted in a trained model as the probability that the input is in a given class. At this point, the outputted values are compared to the data points given layer and the “error” of the predicted output is fed into a cost function. Using the cost value, the cost is propagated backwards through the network.  The weights are adjusted by using an optimization method, for example, gradient descent to minimise the cost as a function of the weights.
+
+\subsection{Decision Tree}
+
+A decision tree classifier works by using simple decision rules to identify the class of data. The feature space is partitioned repeatedly through these decision rules until the classes are grouped together. The rules used to partition the space are chosen by computing the Gini impurity – a measure of how mixed a subset of elements of certain classes are. 
+
+\newpage
+\section{Optimization}
+
+In trying find a 2D projection of the data that produces a maximum accuracy reading, it is generally not efficient to use the Grand Tour algorithm. Instead, new rotation matrices were constructed without the use of the Grand Tour algorithm. Simply put, the Grand Tour's purpose is to give a set of rotation matrices that can be combined to create a "smooth" animation that looks at projections of the data from as many angles as possible. By constructing rotation matrices without the constraints of the Grand Tour, the time to find local and global maxima was decreased.
+
+\subsection{Mathematical Construction}
+
+All rotation matrices generated by the grand tour algorithm are part of the special orthogonal group SO(n), where n denotes the dimensionality of the data. The new rotation matrices that are created will need a determinant of 1. This requirement puts constraints on the elements in the matrices:
+\newline
+1) The row elements need to sum to 1.
+\newline
+2) The dot product between the first and second row must equal 0.
+\newline
+If the first and second rows are thought of as vectors, these constraints can be thought of as two orthogonal vectors that are contained on an n-sphere.
+\newline
+\newline
+Due to the vectors being contained in a n-sphere, it is natural to transform the elements of the vectors into n-dimensional spherical polar coordinates. Now, there are new parameters for each angle used in the coordinate transformation. 
+\newline
+\newline
+Thinking about the problem in 3D space, if one vector was to be fixed from the centre of a sphere to the “north pole”, the second vector would have to like at any point on the “equator”. This gives the freedom to now choose the best positioning of the second vector that maximises the function we are optimizing for. One we find the orientation for the second vector that maximises the function, the problem can be reframed as the second vector is pointing to the north pole in its frame of reference and the first vector can now be moved along the relative equator.
+
+\newpage
+\section{Results}
+
+\newpage
+\section{Conclusion}
+
+Using the grand tour for data mining has some interesting properties. Some insight into dimensionality reduction can be made by finding the projections that maximise the various machine learning algorithms. Looking at the relevant rotation matrices, how much of each feature or dimension appears in the new convoluted basis vectors gives insight to which features are important in distinguishing for a certain class.
+\newline
+\newline
+One suggestion was to look into if the Hilbert curve could be used to look at the data from many different unique projections, as it uniformly covers the space. This wasn’t pursued as there is a problem in defining the projection. In 3D, a vector from a Hilbert curve node to the centre of the data uniquely defines a plane. This is because the vector can be used to take away one dimension and use 2 orthogonal unit vectors to create a basis for a subspace. However, when the dimensionality exceeds 3 there is a problem with this method. In a 4D feature space, 2 unique vectors are needed to define a unique plane. 
+\newline
+\newline
+Something that would be interesting to investigate further is to see if a new unsupervised learning clustering algorithm could be developed to group data into classes. By looking at how much each data point moves relative to another data point in the tour (travel matrix), could this give insight to classification groupings? After looking at the matrix colourmap of this variable, three rectangular shaped structures can be seen in the ordered data. By using network community detection algorithms or some other clustering analysis, would this method work, and more importantly, how would it compare to current unsupervised learning algorithms as the travel matrix is somewhat similar to the distance between points in the feature space.
+
+\end{document}

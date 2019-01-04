@@ -14,7 +14,6 @@
 
 
 
-% LaTeX can be enhanced by the use of packages. These packages can do many things, a few of the most common and useful are used here. They are declared before the document proper, in what is known as the 'preamble'. Packages need to be installed when a .tex file compiles into a .pdf, but should do so automatically.
 
 \usepackage[top=2.54cm, bottom=2.54cm, left=2.75cm, right=2.75cm]{geometry} %This sets the margins of the report.
 % \usepackage[linesnumbered,ruled,vlined]{algorithm2e}
@@ -33,8 +32,8 @@
 % \usetikzlibrary{shapes,calc,positioning}
 % \usetikzlibrary{calc,intersections}
 \usepackage{bm}
-
-% \usepackage{graphicx} % A package allowing insertion of images into the text.
+\usepackage{graphicx} 
+\usepackage[font=small,labelfont=bf]{caption}
 
 \def\doubleunderline#1{\underline{\underline{#1}}}
 
@@ -220,14 +219,23 @@ Machine learning is an area of study involving making predictive computational m
 It is hypothesised under the “no free lunch theorem” that any two optimization algorithms are equivalent when their performance is averaged across all possible problems. By looking at the set of 2D plots over all calculated time steps, the 2 dimensions were used as inputs in three different machine learning algorithms. Each point on the 2D plot had a corresponding label or class. By using the 2 dimensions produced by the grand tour, and the corresponding class label, machine learning models were trained to predict the class. An accuracy measurement was taken to quantify how well the different models performed. A randomised split of training data and test data can be made to get a good indication of how well a model will perform at predicting new samples. However, due to the limited number of training samples in some of the data sets, this was not feasible. To further check for overfitting, the decision boundaries were also plotted.
 \newline
 \newline
-Overfitting is a problem in machine learning where the model has a complicated decision boundary that has a heavy bias towards the training data set. This has the effect of causing the models to not “generalize” well to new data samples.
+Overfitting is a problem in machine learning where the model has a complicated decision boundary that possess a heavy bias towards the training data set. This has the effect of causing the models to not “generalize” well to new data samples.
 \newline
 \newline
 To implement the machine learning algorithms, various python libraries were used. Scikit-learn was primarily used for the SVM and decision tree and tensorflow/keras was used for the neural network.
 
+\newpage
 \subsection{Support Vector Machine (SVM)}
 
-Support vector machine, or SVM, is a supervised learning model finds a decision boundary that maximises the margin between two classes. The margin for a single point is the distance between the decision boundary and that point, the SVM algorithm finds the hyperplane that gives the maximal margin. The margin $M$ is maximised subject to the contraint
+Support vector machine, or SVM, is a supervised learning model finds a decision boundary that maximises the margin between two classes. 
+
+\begin{center}
+\includegraphics[width=0.7\textwidth]{SVM.png}
+\captionof{figure}{Figure showing a margin between two classes of data.}
+
+\end{center}
+
+The margin for a single point is the distance between the decision boundary and that point, the SVM algorithm finds the hyperplane that gives the maximal margin. The margin $M$ is maximised subject to the contraint
 \begin{equation}
 \begin{gathered}
 y_i(x_i^T\cdot\beta+\beta_0)\geq M,\text{ } \forall i
@@ -245,7 +253,6 @@ y_i(x_i^T\cdot\beta+\beta_0)\geq M(1-\varepsilon_i),\text{ } \forall i
 \end{equation}
 
 Depending on the dimensionality of the vector space of the data, and the type of “kernel” used, the geometry of the decision boundary varies. For a linear kernel the decision boundary will be a hyperplane, in 2D this is a straight line. 
-\newline
 
 The kernel (or kernel trick) describes the type of function used to create a transformation to form another dimension. The kernel trick is used to find non-linear boundaries by using a transformation to find a hyperplane in a new feature space. A good example of how the kernel trick works would be using a tranformation (on a 2D feature space) of the form $z=x^2+y^2$ to classify a circular boundary centered at 0. A 2-plane could then be found that would be parallel to the $xy$-plane but would translate as a circular boundary.
 
@@ -254,14 +261,29 @@ The kernel (or kernel trick) describes the type of function used to create a tra
 A neural network is a machine learning technique that can be used for classifying data. The theory of computational neural networks was originally formulated in 1943 [McCulloch, Warren; Walter Pitts (1943). "A Logical Calculus of Ideas Immanent in Nervous Activity], however, due to the computational power needed, models were not commonly used until later on in the 20th century.  
 \newline
 \newline
-Neural networks are constructed with layers of nodes with directed links between nodes in subsequent layers. the first layer has a node for each input dimension or feature, whereas the last layer has a node for each possible output class or label. Between the first and last layers you can have hidden layers, with the number of layers and nodes in each layer being varied depending on the complexity of the model. Every layer excluding the output layer will have a bias node that will always be active (i.e. have a value of 1). Each node from the input layer is connect to all the nodes in the subsequent layer with a forward directed and weighted link. This repeats in the same manner to the final output layer. The activation of each node is computed by summing all the input nodes multiplied by their relative weights. The value of this sum is then applied to an “activation function” that will return a value between 0 and 1.
+Neural networks are constructed with layers of nodes with directed links between nodes in subsequent layers. the first layer has a node for each input dimension or feature, whereas the last layer has a node for each possible output class or label. Between the first and last layers you can have hidden layers, with the number of layers and nodes in each layer being varied depending on the complexity of the model. Every layer excluding the output layer will have a bias node that will always be active (i.e. have a value of 1). Each node from the input layer is connect to all the nodes in the subsequent layer with a forward directed and weighted link. This repeats in the same manner to the final output layer. 
 \newline
-\newline
+
+The activation of each node is computed by summing all the input nodes multiplied by their relative weights. The value of this sum is then applied to an “activation function” that will return a value between 0 and 1. One example of an activation function commonly used is the sigmoid function, 
+
+\begin{equation}
+h(x)=\frac{1}{1+e^{-x}}
+\end{equation}
+
 To train a neural network, the weights are randomly initialised and a training sample is inputted at the first layer of nodes. The values are then fed-forward through the network to give a reading at each output node between 0 and 1, which can be heuristically interpreted in a trained model as the probability that the input is in a given class. At this point, the outputted values are compared to the data points given layer and the “error” of the predicted output is fed into a cost function. Using the cost value, the cost is propagated backwards through the network.  The weights are adjusted by using an optimization method, for example, gradient descent to minimise the cost as a function of the weights.
 
 \subsection{Decision Tree}
 
-A decision tree classifier works by using simple decision rules to identify the class of data. The feature space is partitioned repeatedly through these decision rules until the classes are grouped together. The rules used to partition the space are chosen by computing the Gini impurity – a measure of how mixed a subset of elements of certain classes are. 
+A decision tree classifier works by using simple decision rules to identify the class of some inputted data. The feature space is partitioned repeatedly through these decision rules until the classes are grouped together. The rules used to partition the space are chosen by computing the Gini impurity, which is calculated for a set of points with $J$ classes by
+\begin{equation}
+I_G(p)=1-\sum_{i=1}^Jp_i^2
+\end{equation}
+
+where $p_i$ is the fraction of items in class $i$. Gini inpurity is a measure of how mixed a subset of elements of certain classes are. We then measure the information gain $IG$ by looking at the parent Gini impurity, and the Gini impurity of the 2 child branches
+
+\begin{equation}
+IG= I_G(p) - (I_G(p) + I_G(p))
+\end{equation}
 
 \newpage
 \section{Optimization}

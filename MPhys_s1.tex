@@ -140,31 +140,76 @@ There are various methods to implement the grand tour algorithm, in this project
 
 Each data point is represented as an $n$-dimensional vector in the feature space
 \begin{equation}
-\bm{\underline{x}}=\sum_{i=1}^n x_i\cdot\bm{\underline{e}}_i 
+\bm{x}=\sum_{i=1}^n x_i \bm{e}_i 
 \end{equation}
-where $x_i$ is the value of the data for the $i^{th}$ dimension and $\bm{\underline{e}}_i$ is the $i^{th}$ unit basis vector. The data is transformed by multiplying the rotation matrix by the data
+where $x_i$ is the value of the data for the $i^{th}$ dimension and $\bm{e}_i$ is the $i^{th}$ unit basis vector. The data is transformed by multiplying the rotation matrix by the data
 \begin{equation}
-\bm{\underline{x}}^\prime = \bm{\doubleunderline{Q}}(t)\cdot\bm{\underline{x}}
+\bm{x}^\prime = \bm{Q}(t) \bm{x}
 \end{equation}
-where $\bm{\doubleunderline{Q}}(t)$ is the rotation matrix given by the grand tour at timestep $t$, the details of which will be described below. After the transformation has been made, $\bm{\underline{x}}^\prime$ is still a $n$-dimensional vector. To make the projection into 2D, two of the orginal $\bm{\underline{e}}_i$ basis vectors need to be chosen. If $j$ and $k$ are the chosen basis directions, the 2D space can now be represented by the respective $x$ and $y$ values
+where $\bm{Q}(t)$ is the rotation matrix given by the grand tour at timestep $t$, the details of which will be described below. After the transformation has been made, $\bm{\underline{x}}^\prime$ is still a $n$-dimensional vector. To make the projection into 2D, two of the orginal $\bm{\underline{e}}_i$ basis vectors need to be chosen. If $j$ and $k$ are the chosen basis directions, the 2D space can now be represented by the respective $x$ and $y$ values
 \begin{equation}
 \begin{split}
-x=\bm{\underline{x}}^\prime\cdot\bm{\underline{e}}_j, 
+x=\bm{x}^\prime\cdot\bm{e}_j, 
 \\
-y=\bm{\underline{x}}^\prime\cdot\bm{\underline{e}}_k.
+y=\bm{x}^\prime\cdot\bm{e}_k.
 \end{split}
 \end{equation}
 
-When constructing the generalised rotation matrix in the grand tour, we need to choose $\bm{\doubleunderline{Q}}(t)$ to be an element of the special orthogonal group $SO(n)$ which has the properties of being a square $n\times n$ matrix with a determinant of +1. $SO(n)$ is also equivalent to the space of all rotations of the unit sphere in $\mathbb{R}^n$, therefore it is a Lie group.
+When constructing the generalised rotation matrix in the grand tour, we need to choose $\bm{Q}(t)$ to be an element of the special orthogonal group $SO(n)$ which has the properties of being a square $n\times n$ matrix with a determinant of +1. $SO(n)$ is also equivalent to the space of all rotations of the unit sphere in $\mathbb{R}^n$, therefore it is a Lie group.
 \newline
 
-We require the sequence of planes in the grand tour to be dense in the space of all planes. To satisfy this, consider a curve in a $n$-torus, $\bf{T}^n$. The curve $\alpha$ will be dense if the components of $\alpha$ are all linear independent real numbers. In this context, real numbers $\lambda_i$ with  $i=1,...,N$ are said to satisfy the condition of linear independence if $\sum_{i=1}^N \lambda_i n_i=0$, where $n_i$ can be any set of integers, is only satisfied by the set containing $n_i=0, \forall i$. This gives the 
+We require the sequence of planes in the grand tour to be dense in the space of all planes. To satisfy this, consider a curve on a $n$-torus in $p$-dimensions, $\bf{T}^p$, where $p=\frac{n(n-1)}{2}={n \choose 2} $. The curve $\alpha$ will be dense if the components of $\alpha$ are all linearly independent real numbers. In this context, real numbers $\lambda_i$ with  $i=1,\dotsc,p$ are said to satisfy the condition of linear independence if $\sum_{i=1}^p \lambda_i n_i=0$, where $n_i$ can be any set of integers, is only satisfied by the set containing $n_i=0, \forall i$. This gives the mapping
 \begin{equation}
-\alpha: \Bbb R \rightarrow \bf{T}
-
+\begin{gathered}
+\alpha: \mathbb R \rightarrow \bf{T}^p
+\\
+\text{via}
+\\
+\bm{\alpha}(t)=(\lambda_1 t,\dotsc, \lambda_p t)
+\end{gathered}
 \end{equation}
 
+where $t$ is the time-step multiplied by the constant step-size. 
+\newline
+
+A mapping now needs to be defined from $\bf{T}^p$ onto $SO(n)$. The mapping will also need to be surjective to preserve the denseness feature of the $\alpha$ curve. Consider the rotation matrix $R_{i,j}(\theta)$ to be the element of $SO(n)$ that rotates the $\bm{e}_i \bm{e}_j$ plane by an angle of $\theta$ with the elements of the matrix being
+
+\begin{equation}
+R_{i,j}(\theta) = 
+\begin{pmatrix}
+  1 &  \cdots & 0 & \cdots & 0 & \cdots &  0 \\
+  \vdots  &  \ddots & \vdots& \ddots &\vdots&\ddots&\vdots  \\
+  0 & \cdots & \cos{(\theta)} & \cdots & -\sin{(\theta)} &  \cdots & 0 \\
+  0&\ddots&\vdots&\ddots&\vdots&\ddots&\vdots\\
+  0 &  \cdots & \sin{(\theta)}&\cdots & \cos{(\theta)} &  \cdots & 0 \\
+  \vdots  &  \ddots & \vdots&\ddots& \vdots &\ddots&\vdots  \\
+  0 & \cdots & 0 & \cdots&0 & \cdots & 1
+ \end{pmatrix}
+\end{equation}
+
+with the cosines and sines appearing on the $i^{th}$ and $j^{th}$ rows and columns. The mapping can now be defined as
+
+\begin{equation}
+\begin{gathered}
+\beta: {\bf T^p}
+ \rightarrow SO(n)
+\\
+\bm{\beta}(\theta_{1,2},\theta_{1,3},\dotsc,\theta_{n-1,n})= R_{1,2}(\theta_{1,2}) \times R_{1,3}(\theta_{1,3}) \times \dotsc \times R_{n-1,n}(\theta_{n-1,n})
+\\
+\text{or more compactly written as}
+\\
+\bm{\beta}(\theta_{1,2},\theta_{1,3},\dotsc,\theta_{n-1,n})=\prod_{\substack{i,j \\ i<j}}^nR_{i,j}(\theta_{i,j})
+\end{gathered}
+\end{equation}
+
+where the the angles $\theta_{i,j}$ are equal to the elements of $\bm{\alpha}(t)$. The full rotation matrix is thus defined as $\bm{Q}(t)=\bm{\beta}(\bm{\alpha}(t))$
+
 \subsection{Implementation}
+
+The algorithm was implemented with the use of Python, and animated ny using libraries PyQt and Matplotlib. To generate the $p$ independent real numbers, the first $p$ prime numbers were found and then the square root was taken. To keep all the values between 0 and 1, the actual number used was  modulo 1. 
+\newline
+
+In practice, the time $t$ was calculated by using $t=t^\prime \delta$, where $t^\prime$ would go up in integers for each time step, and $\delta$ would be the step size which was set to $0.01$. The value for $\delta$ was determined by seeing how the grand tour looked after rendering the animation. It should be noted that the dimensionality of the feature space has an impact on the choice of $\delta$.
 
 \newpage
 \section{Machine Learning}
@@ -182,11 +227,27 @@ To implement the machine learning algorithms, various python libraries were used
 
 \subsection{Support Vector Machine (SVM)}
 
-Support vector machine, or SVM, is a supervised learning model finds a decision boundary that maximises the margin between two classes. The margin for a single point is the distance between the decision boundary and that point, the SVM algorithm finds the hyperplane that gives the maximal margin.
+Support vector machine, or SVM, is a supervised learning model finds a decision boundary that maximises the margin between two classes. The margin for a single point is the distance between the decision boundary and that point, the SVM algorithm finds the hyperplane that gives the maximal margin. The margin $M$ is maximised subject to the contraint
+\begin{equation}
+\begin{gathered}
+y_i(x_i^T\cdot\beta+\beta_0)\geq M,\text{ } \forall i
+\end{gathered}
+\end{equation}
+
+where $y_i$ is the target variable, formally $y_i \in \{-1, 1\}$, $\beta$ and $\beta_0$ are the coefficients of the hyperplane. In the case where the data is not linearly separable, some points are allowed to be on the wrong side of the margin. These points are then given a slack variable $\varepsilon_i$ measured as the distance away from the margin, and a new constraint is formulated:
+
+\begin{equation}
+\begin{gathered}
+y_i(x_i^T\cdot\beta+\beta_0)\geq M(1-\varepsilon_i),\text{ } \forall i
+\\
+\sum_{i=1}^m\varepsilon_i = \text{constant}
+\end{gathered}
+\end{equation}
+
+Depending on the dimensionality of the vector space of the data, and the type of “kernel” used, the geometry of the decision boundary varies. For a linear kernel the decision boundary will be a hyperplane, in 2D this is a straight line. 
 \newline
-In the case where the data is not linearly separable, some points are allowed to be on the wrong side of the margin. These points are then given a slack variable and a new constraint is formulated:
-\newline
-Depending on the dimensionality of the vector space of the data, and the type of “kernel” used, the geometry of the decision boundary varies. For a linear kernel the decision boundary will be a hyperplane, in 2D this is a straight line. The kernel in the context used here describes the type of function used to create a transformation to form another dimension. The kernel trick helps find non-linear boundaries by using a transformation to find a hyperplane in the new feature space. 
+
+The kernel (or kernel trick) describes the type of function used to create a transformation to form another dimension. The kernel trick is used to find non-linear boundaries by using a transformation to find a hyperplane in a new feature space. A good example of how the kernel trick works would be using a tranformation (on a 2D feature space) of the form $z=x^2+y^2$ to classify a circular boundary centered at 0. A 2-plane could then be found that would be parallel to the $xy$-plane but would translate as a circular boundary.
 
 \subsection{Neural Network}
 

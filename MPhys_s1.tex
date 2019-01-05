@@ -108,12 +108,12 @@ The vector space containing the full dimensionality of the data is known as the 
 \newpage
 \section{The Grand Tour Algorithm}
 
-The grand tour is an algorithm that was developed as a tool to visualise high-dimensional data. Beyond 3 dimensions, visualising multi-dimensional spaces becomes problematic and unintuitive for most people. The grand tour proposes to get around this problem by producing a series of rotation matrices. The infinite set of these rotation matrices applied to the data points show the multidimensional space from every possible 2D projection. Due to the practical infeasibility of having an infinite number of rotation matrices, the grand tour algorithm attempts to explore unique 2D projections of the feature space within a finite number of time step iterations. 
+The grand tour is an algorithm that was developed as a tool to visualise high-dimensional data. Beyond three dimensions, visualising multi-dimensional spaces becomes problematic and unintuitive for most people. The grand tour proposes to get around this problem by producing a series of rotation matrices. The infinite set of these rotation matrices applied to the data points show the multidimensional space from every possible 2D projection. Due to the practical infeasibility of having an infinite number of rotation matrices, the grand tour algorithm attempts to explore unique 2D projections of the feature space within a finite number of time step iterations. 
 \newline
 
 A set of key features for the grand tour to have were proposed in the original paper. These include:
 \newline
-1) The sequence of planes should be dense in the space of all planes. This motivates the use of the Grassmannian manifold $G_{2,n}$. The Grassmannian $G_{k,n}$ is a compact smooth manifold that parameterises all $k$-dimensional linear subspaces of the $n$-dimensional real or complex vector space.
+1) The sequence of planes should be dense in the space of all planes. This motivates the use of the Grassmannian manifold $G_{2,n}$. The Grassmannian $G_{k,n}$ is a compact smooth manifold that parameterises all $k$-dimensional linear subspaces of a $n$-dimensional real or complex vector space.
 \newline
 2) The sequence of planes should become dense in $G_{2,n}$ rapidly. For any practical use of the grand tour, the algorithm needs to be computationally efficient in satisfying some appromiately dense coverage of the space of all planes.
 \newline
@@ -272,7 +272,7 @@ Neural networks are constructed with layers of nodes with directed links between
 
 To compute the activation $z$ of a node $j$ in layer $l$, the input nodes are multiplied by their relative weights and all summed
 \begin{equation}
-z^{(l)}_j = \sum_{i=1}^N \theta_i z^{(l-1)}_i
+z^{(l)}_j = \sum_{i=1}^N \theta_i a^{(l-1)}_i
 \end{equation}
 
 where $N$ is the number of nodes that have links to node $j$ in layer $l$. The value of this sum is then inputted into an “activation function” that will return a value between 0 and 1. One example of an activation function commonly used is the sigmoid function, 
@@ -310,28 +310,57 @@ where $p_i$ is the fraction of items in class $i$. Gini inpurity is a measure of
 IG= N\cdot I_{Gini}(p, J) - (N_0\cdot I_{Gini}(p, J_0) + N_1\cdot I_{Gini}(p, J_1))
 \end{equation}
 
-Information gain is then measured for all possible splits, and the split that gives the highest information gain is chosen. This process is then recursively made until either a chosen $max \ depth$ is reached or all training data has been seperated.  
+Information gain is then measured for all possible splits, and the split that gives the highest information gain is chosen. This process is then recursively made until either a chosen $max\ depth$ is reached or all training data has been seperated.  
 
 \newpage
 \section{Optimization}
 
-In trying find a 2D projection of the data that produces a maximum accuracy reading, it is generally not efficient to use the Grand Tour algorithm. Instead, new rotation matrices were constructed without the use of the Grand Tour algorithm. This is because the Grand Tour's purpose is to give a set of rotation matrices that can be combined to create a "smooth" animation that returns projections of the data from as many angles as possible. By constructing rotation matrices without the constraints of the Grand Tour, the time to find local and global maxima was decreased.
+When trying to find a 2D projection of the data that produces a maximum accuracy reading, it is generally not efficient to use the Grand Tour algorithm. Instead, new rotation matrices should be constructed without the use of the Grand Tour algorithm. This is because the Grand Tour's purpose is to give a set of rotation matrices that can be combined to create a "smooth" animation that returns projections of the data from as many angles as possible. By constructing rotation matrices without the constraints of the Grand Tour, the time to find local and global maxima is decreased.
 
 \subsection{Mathematical Construction}
 
-All rotation matrices generated by the grand tour algorithm are part of the special orthogonal group SO(n), where n denotes the dimensionality of the data. The new rotation matrices that are created will need a determinant of 1. This requirement puts constraints on the elements in the matrices:
+In an $n$-dimensional feature space, all $n\times n$ rotation matrices will need to be elements of the special orthogonal group $SO(n)$. Therefore, new rotation matrices that are created will need a determinant of +1. This requirement puts constraints on the elements in the matrices:
+\begin{equation}
+\sum_{k}A_{ik}A_{jk} = \delta_{ij}
+\end{equation}
+
+where $\bm{A}$ represents the rotation matrix and $\delta_{ij}$ is the Kronecker delta. Consider the transformation equation given by equation (2), given that the projection wanted is 2D, only two rows of the rotation matrix need to be quantified. To simplify the probem the following vectors are used: 
+\begin{align}
+\bm{a}_1 = \begin{bmatrix}
+           A_{11} \\
+           A_{12} \\
+           \vdots \\
+           A_{1n}
+           \end{bmatrix} 
+           && 
+\bm{a}_2 = \begin{bmatrix}
+           A_{21} \\
+           A_{22} \\
+           \vdots \\
+           A_{2n}
+           \end{bmatrix}
+\end{align} 
+
+The constraint given by equation (13) can now be written as
+\begin{equation}
+\begin{split}
+\bm{a}_1 \cdot \bm{a}_1 = 1
+\\
+\bm{a}_2 \cdot \bm{a}_2 = 1
+\\
+\bm{a}_1 \cdot \bm{a}_2 = 0
+\end{split}
+\end{equation}
+
+In the vector space $\mathbb{R}^n$, $\bm{a}_1$ and $\bm{a}_2$ can be considered as vectors pointing to the edge of an $n$-sphere, but with the added constraint that they are orthogonal to each other. 
+\begin{center}
+\includegraphics[width=0.7\textwidth]{OrthogV.png}
+\captionof{figure}{Figure showing the $n$=3 case with a sphere. The second horizontal vector can point anywhere on the dotted "equator" line to satisfy the orthogonality condition.}
+
+\end{center}
+
+Due to the vectors being contained on a $n$-sphere, it is natural to transform the elements of the vectors into $n$-dimensional spherical polar coordinates. Now there are new parameters for each angle used in the coordinate transformation.
 \newline
-1) The row elements need to sum to 1.
-\newline
-2) The dot product between the first and second row must equal 0.
-\newline
-If the first and second rows are thought of as vectors, these constraints can be thought of as two orthogonal vectors that are contained on an n-sphere.
-\newline
-\newline
-Due to the vectors being contained in a n-sphere, it is natural to transform the elements of the vectors into n-dimensional spherical polar coordinates. Now, there are new parameters for each angle used in the coordinate transformation. 
-\newline
-\newline
-Thinking about the problem in 3D space, if one vector was to be fixed from the centre of a sphere to the “north pole”, the second vector would have to like at any point on the “equator”. This gives the freedom to now choose the best positioning of the second vector that maximises the function we are optimizing for. One we find the orientation for the second vector that maximises the function, the problem can be reframed as the second vector is pointing to the north pole in its frame of reference and the first vector can now be moved along the relative equator.
 
 \newpage
 \section{Results}

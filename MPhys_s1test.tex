@@ -12,9 +12,6 @@
   \setfoot{}{\usepage}{}%
 }
 
-
-
-
 \usepackage[top=2.54cm, bottom=2.54cm, left=2.75cm, right=2.75cm]{geometry} %This sets the margins of the report.
 % \usepackage[linesnumbered,ruled,vlined]{algorithm2e}
 \usepackage{amsmath}
@@ -37,6 +34,7 @@
 \usepackage{subfig}
 \usepackage{mathtools}
 \usepackage{booktabs}
+\usepackage{apacite}
 
 
 
@@ -44,11 +42,9 @@
 
 % Choose your citations style by commenting out one of the following groups. If you decide to change style, you should also delete the .bbl file that you will find in the same folder as your .tex and .pdf files.
 
-% IEEE style citation:
+\bibliographystyle{abbrv} % IEEE referencing (use in conjunction with the cite package)
 
-\usepackage{cite}         % A package that creates references in the IEEE style. 
-\newcommand{\citet}{\cite} % Use with cite only, so that it understands the natbib-specific \citet command
-\bibliographystyle{ieeetr} % IEEE referencing (use in conjunction with the cite package)
+
 
 %% Author-date style citation:
 %\usepackage[round]{natbib} % A package that creates references in the author-date style, with round brackets
@@ -468,8 +464,20 @@ The Grand Tour was performed for 1000 iterations. At each iteration, the three m
 
 \end{center}
 
+For a particular projection of the Grand Tour on the wine data set, the decision boundaries are shown in Figure 6 for each algorithm. Note the relative similarity of the decision boundaries, even though the different algorithms have very different methods to construct the decision boundary. The accuracy on this particular projection in the Grand Tour was 92.7\% for the SVM, the NN was 95.5\%, and the DT was also 95.5\%.
+\begin{figure}[!htb]
+    \centering
+    \subfloat[The decision boundary produced by the decision tree graph (b)]{{\includegraphics[width=9cm]{DecBound_graph1.png} }}%
+    \qquad
+    \subfloat[The decision tree graph for inputs $x$ and $y$]{{\includegraphics[width=9cm]{DecBound_graph2.png} }}%
+    \qquad
+    \subfloat[The decision tree graph for inputs $x$ and $y$]{{\includegraphics[width=9cm]{DecBound3_graph.png} }}%
+    \caption{Figure showing the decision tree graph (b) and respective boundary (a).}%
+    \label{fig:example}%
+\end{figure}
+\newpage
 
-A comparison of all the machine learning model's performances is given in the table below for all the data-sets.
+A comparison of all the machine learning model's performances is given in Table 1 below for some of the data-sets used.
 
 \begin{table}[h]
 \caption{Table showing the machine learning performances of the data-sets used. Measure A is the maximum accuracy found in the 1000 iterations on the Grand Tour. Measure B is the number of iterations where that machine learning model performed better than the other two.}
@@ -487,22 +495,37 @@ A comparison of all the machine learning model's performances is given in the ta
 
 \end{table}
 
-
-
-
-\newpage
 \subsection{Optimisation Performance}
+
+The optimisation did very well in finding projections that maximised accuracy measurements. The accuracy found was better than the maximum Grand Tour accuracies over 1000 iterations.
+
+\begin{table}[h]
+\caption{Table showing the performance of the decision tree accuracy when used in conjunction with the optimisation algorithm which finds optimal 2D projections. The n-D DT accuracy is how well the decision tree performed when acting in the $n$-dimensional feature space.}
+\begin{tabular}{|r|c|c|c|c|c|c|c|}
+\hline
+Data Set:             & Wine   & Particle & Iris   & Pulsar & Bank   & Blood  & Spine  \\ \hline
+$n$-D DT Accuracy       & 99.4\% & 83.5\%   & 90.6\% & 97.8\% & 98.5\% & 76.3\% & 82.2\% \\ \hline
+Optimisation Accuracy & 100\%  & 95.8\%   & 100\%  & 98.2\% & 100\%  & 83.1\% & 92.2\% \\ \hline
+\end{tabular}
+\end{table}
+
 \newpage
 \section{Conclusion}
+
+In this project, an implementation of the Grand Tour was successfully made in Python. The performance of three machine learning algorithms used on the projections was also looked at. Then a new algorithm was developed to find optimal projections to maximise accuracy of a multi-dimensional data set.
+\newline
 
 Using the grand tour for data mining has some interesting properties. Some insight into dimensionality reduction can be made by finding the projections that maximise the various machine learning algorithms. Looking at the relevant rotation matrices, how much of each feature or dimension appears in the new convoluted basis vectors gives insight to which features are important in distinguishing for a certain class.
 \newline
 \newline
-One suggestion was to look into if the Hilbert curve could be used to look at the data from many different unique projections, as it uniformly covers the space. This was not pursued as there is a problem in defining the projection. In 3D, a vector from a Hilbert curve node to the centre of the data uniquely defines a plane. This is because the vector can be used to restrict one dimension and use two orthogonal unit vectors to create a basis for a subspace. However, when the feature space exceeds three dimensions there is a problem with this method. In a 4D feature space, two unique vectors are needed to define a unique plane. After using the vector defined from the Hilbert node to the centre of feature space, the subspace still needs to be reduced by one dimension to get a 2D space. 
+One suggestion was to look into if the Hilbert curve could be used to look at the data from many different unique projections, as it uniformly covers the space. This was not pursued as there is a problem in defining the projection. In 3D, a vector from a Hilbert curve node to the centre of the data uniquely defines a plane. This is because the vector can be used to restrict one dimension and use two orthogonal unit vectors to create a basis for a subspace. However, when the feature space exceeds three dimensions there is a problem with this method. In a 4D feature space, two unique vectors are needed to define a unique plane. After using the vector defined from the Hilbert node to the centre of feature space, the subspace still needs to be reduced by one dimension to get a 2D space.
 \newline
 \newline
 Something that would be interesting to investigate further is to see if a new unsupervised learning clustering algorithm could be developed to group data into classes. By looking at how much each data point moves relative to another data point in the tour (travel matrix), could this give insight to classification groupings? After looking at the matrix colourmap of this variable, three rectangular shaped structures can be seen in the ordered data. By using network community detection algorithms or some other clustering analysis, would this method work, and more importantly, how would it compare to current unsupervised learning algorithms as the travel matrix is somewhat similar to the distance between points in the feature space.
 
+\newpage
+\bibliographystyle{ieeer}
 \bibliography{test}
+
 
 \end{document}
